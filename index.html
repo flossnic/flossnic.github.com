@@ -6,53 +6,74 @@
         <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.7/dijit/themes/claro/claro.css" />
     	<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.7/dojox/grid/resources/Grid.css" />
 		<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.7/dojox/grid/resources/claroGrid.css" />
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.7/dojo/dojo.js" data-dojo-config="ParseOnLoad:true"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/dojo/1.7/dojo/dojo.js" data-dojo-config="async:1"></script>
 
         <script type="text/javascript">
-            dojo.require("dojox.data.QueryReadStore");
-            dojo.require("dojox.grid._CheckBoxSelector");
-            dojo.require("dojo.data.ObjectStore");
-            dojo.require("dojo.parser");
-            dojo.require("dojox.grid.DataGrid");
-            dojo.require("dijit.form.TextBox");
-            dojo.require("dijit.form.Button");
-            dojo.require("dijit.form.ValidationTextBox");
-            dojo.require("dijit.form.CheckBox");
-           
-            
-            dojo.ready(function(){
-            	
-            	mystore=new dojox.data.QueryReadStore({url:"/DojoProject/dummydynamicgrid"});//Calling the servlet /DojoProject/data no other parameters are here. Dojo will add few parameters.
-            	
-            	grid = new dojox.grid.DataGrid({
-                    store: mystore,
-                    structure: [{
-                    	type: "dojox.grid._CheckBoxSelector"
-                    },[
-                        {name:"id", field:"id", width: "200px"},
-                        {name:"item", field:"item", width: "200px"},
-                        {name:"quantity", field:"quantity", width: "200px"},
-                        {name:"cost", field:"cost", width: "200px"},
-                        {name:"total", field:"total", width: "200px"}
-                    ]]
-                },dojo.byId("gridContainer"));
-                
-                grid.startup();
-                
-                dojo.forEach(dojo.query(".custbutton"), function(w) {
-                	console.log(w);
-        			dojo.style(w,"width","200px");
-        			});
-            });
+            var dummydata = [{
+    id: 1,
+    name: "One"},
+{
+    id: 2,
+    name: "Two"},
+{
+    id: 3,
+    name: "Three"},
+{
+    id: 4,
+    name: "Four"},
+{
+    id: 5,
+    name: "Five"},
+{
+    id: 6,
+    name: "Six"}];
+var dummylayout;
+var dummydatastore;
+var dummydataadaptor;
+var grid;
+function addtorid(){
+    dojo.byId("name").value;
+    
+}
+require(["dojo/parser", "dojo/domReady!", "dijit/form/ValidationTextBox","dijit/form/Button","dojox/grid/DataGrid", "dojox/grid/_CheckBoxSelector", "dojo/store/Memory", "dojo/data/ObjectStore"], function(parser) {
+    parser.parse();
+    dojo.ready(function() {
+        dummylayout = [{
+            type: "dojox.grid._CheckBoxSelector"}, [{
+            field: 'id',
+            name: 'Id',
+            width: '45%'
+
+            },
+        {
+            field: 'name',
+            name: 'Name',
+            width: '50%'
+
+            }]];
+
+        dummydatastore = new dojo.store.Memory({
+            data: dummydata
+        });
+        dummydataadaptor = new dojo.data.ObjectStore({
+            objectStore: dummydatastore
+        });
+        grid = new dojox.grid.DataGrid({
+            structure: dummylayout,
+            store: dummydataadaptor,
+            style: "width:100%"
+        }, dojo.byId("datagrid"));
+        grid.startup();
+    });
+});
         </script>
     </head>
     <body class="claro">
     	
-    	<label for="name">Name: </label><br><input data-dojo-type="dijit.form.TextBox" name="name" id="name"/><br>
-			<input data-dojo-type="dijit.form.CheckBox" type="checkbox" name="password" id="password"/>
-			<input type="checkbox" name="option2" value="Butter" checked> 
-			<button data-dojo-type="dijit.form.Button" class="custbutton">Hello world</button>
-			
-    	<div id="gridContainer"></div>
+    	<div id="datagrid"></div>
+<label for="name">Name:</label>
+<input type="text" id="name" name="name" data-dojo-type="dijit.form.ValidationTextBox" required data-dojo-props="regExp:'[a-zA-Z0-9]+', promptMessage: 'Please enter Name you want to add &quot;Only Alphnumeric &quot;', invalidMessage: '', missingMessage: ''">
+<button data-dojo-type="dijit.form.Button" onCilck="addtorid();">Add To Grid</button>
+
     </body>
 </html>
